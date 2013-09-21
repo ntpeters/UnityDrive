@@ -1,4 +1,4 @@
-package backend;
+package base;
 
 /**
  * This file contains any constants this application requires.

@@ -1,4 +1,4 @@
-package backend;
+package base;
 
 /**
  * Exception to be thrown upon failure to authenticate
