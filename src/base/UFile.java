@@ -86,4 +86,8 @@ public class UFile{
     public void clearChildren(){
         children.clear();
     }
+
+    public List<UFile> getChildren() {
+        return this.children;
+    }
 }

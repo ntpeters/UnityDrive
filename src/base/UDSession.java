@@ -8,7 +8,7 @@ import java.util.List;
 public interface UDSession {
     public boolean authenticate( String userID ) throws UDException;
     public AccountInfo getAccountInfo();
-    public List<UFile> getFileList();
+    public UFile getFileList() throws UDException;
     public List<UFile> searchFiles( String searchString );
     public boolean upload( String filename );
     public boolean download( String fileID );

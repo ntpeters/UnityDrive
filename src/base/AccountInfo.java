@@ -8,8 +8,8 @@ package base;
  * To change this template use File | Settings | File Templates.
  */
 public class AccountInfo {
-    String username;
-    String sessionType;
-    double totalSize;
-    double usedSize;
+    public String username;
+    public String sessionType;
+    public double totalSize;
+    public double usedSize;
 }
