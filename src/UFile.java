@@ -9,11 +9,12 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class UFile{
-    private String name;
-    private java.io.File file;
-    private boolean isFolder;
-    private List<UFile> children;
-    private UFile parent;
+    private String name; //Name of the file (e.g. document.docx)
+    private java.io.File file; //Java file object
+    private boolean isFolder; //If the UFile object is a folder
+    private List<UFile> children; //List of children of this UFile
+    private UFile parent; //Parent of this UFile
+    private String origin; //Service of origin (format: "username-service")
 
     public UFile(){
         children = new ArrayList<UFile>();
@@ -54,6 +55,14 @@ public class UFile{
 
     public void setParent(UFile parent){
         this.parent = parent;
+    }
+
+    public String getOrigin(){
+        return origin;
+    }
+
+    public void setOrigin(String origin){
+        this.origin = origin;
     }
 
     public void addChild(UFile child){
