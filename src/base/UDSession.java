@@ -1,4 +1,4 @@
-package backend;
+package base;
 
 import java.util.List;
 
@@ -8,9 +8,9 @@ import java.util.List;
 public interface UDSession {
     public boolean authenticate( String userID ) throws UDException;
     public AccountInfo getAccountInfo();
-    public List<UFile> getFileList() throws UDException;
+    public List<UFile> getFileList();
     public List<UFile> searchFiles( String searchString );
     public boolean upload( String filename );
     public boolean download( String fileID );
-    public String getSesssionType();
+    public String getSessionType();
 }

@@ -1,4 +1,4 @@
-package backend;
+package base;
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,7 +9,7 @@ package backend;
  */
 public class AccountInfo {
     String username;
-
+    String sessionType;
     double totalSize;
     double usedSize;
 }
