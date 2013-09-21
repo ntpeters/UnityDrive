@@ -7,7 +7,7 @@ package backend;
  * Time: 9:56 AM
  * To change this template use File | Settings | File Templates.
  */
-public class accountInfo {
+public class AccountInfo {
     String username;
 
     double totalSize;
