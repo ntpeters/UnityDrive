@@ -21,6 +21,7 @@ local.properties
 .project
 
 # vim temp files
+*.*~
 *.un~
 *.swp
 
