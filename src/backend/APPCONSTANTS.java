@@ -1,3 +1,5 @@
+package backend;
+
 /**
  * This file contains any constants this application requires.
  * Primarily application keys for accessing the various services.
