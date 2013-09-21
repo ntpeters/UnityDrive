@@ -1,3 +1,5 @@
+package backend;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,9 +13,9 @@ import java.util.List;
 public class UFile{
     private String name; //Name of the file (e.g. document.docx)
     private java.io.File file; //Java file object
-    private boolean isFolder; //If the UFile object is a folder
-    private List<UFile> children; //List of children of this UFile
-    private UFile parent; //Parent of this UFile
+    private boolean isFolder; //If the backend.UFile object is a folder
+    private List<UFile> children; //List of children of this backend.UFile
+    private UFile parent; //Parent of this backend.UFile
     private String origin; //Service of origin (format: "username-service")
 
     public UFile(){

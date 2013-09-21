@@ -8,8 +8,8 @@ import java.util.List;
 public interface UDSession {
     public boolean authenticate( String userID );
     public accountInfo getAccountInfo();
-    public List<UFILE> getFileList();
-    public List<UFILE> searchFiles( String searchString );
+    public List<UFile> getFileList();
+    public List<UFile> searchFiles( String searchString );
     public boolean upload( String filename );
     public boolean download( String fileID );
     public String getSesssionType();
