@@ -12,17 +12,10 @@ import java.util.List;
  */
 public class UFile{
     private String name; //Name of the file (e.g. document.docx)
-<<<<<<< HEAD:src/UFile.java
     private String id;  //ID of the file
     private boolean isFolder; //If the UFile object is a folder
     private List<UFile> children; //List of children of this UFile
     private UFile parent; //Parent of this UFile
-=======
-    private java.io.File file; //Java file object
-    private boolean isFolder; //If the base.UFile object is a folder
-    private List<UFile> children; //List of children of this base.UFile
-    private UFile parent; //Parent of this base.UFile
->>>>>>> c498e9f7f75cc35e062dceb0c0afb387275ef3a0:src/base/UFile.java
     private String origin; //Service of origin (format: "username-service")
 
     public UFile(){
