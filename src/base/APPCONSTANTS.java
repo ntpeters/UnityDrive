@@ -15,4 +15,7 @@ public class APPCONSTANTS {
         public static final String CLIENT_ID = "304793868911-vokk592ddao58s9oqm8f6jhj2udm6po5.apps.googleusercontent.com";
         public static final String CLIENT_SECRET = "pK_uV6wVb0M13cXCIgdYP9lQ";
     }
+
+    public static class Box {
+    }
 }
