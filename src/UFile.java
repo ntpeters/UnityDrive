@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class UFile{
     private String name; //Name of the file (e.g. document.docx)
-    private java.io.File file; //Java file object
+    private String id;  //ID of the file
     private boolean isFolder; //If the UFile object is a folder
     private List<UFile> children; //List of children of this UFile
     private UFile parent; //Parent of this UFile
@@ -31,14 +31,6 @@ public class UFile{
 
     public void setName(String name){
         this.name = name;
-    }
-
-    public java.io.File getFile(){
-        return file;
-    }
-
-    public void setFile(java.io.File file){
-        this.file = file;
     }
 
     public void isFolder(boolean f){
@@ -63,6 +55,14 @@ public class UFile{
 
     public void setOrigin(String origin){
         this.origin = origin;
+    }
+
+    public String getId(){
+        return id;
+    }
+
+    public void setId(String id){
+        this.id = id;
     }
 
     public void addChild(UFile child){
