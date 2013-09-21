@@ -1,6 +1,7 @@
 package base.sessions;
 
 import base.AccountInfo;
+import base.UDException;
 import base.UDSession;
 import base.UFile;
 import com.box.boxjavalibv2.BoxClient;
@@ -19,12 +20,12 @@ import java.net.Socket;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: mgrimes
- * Date: 9/21/13
- * Time: 1:43 PM
- * To change this template use File | Settings | File Templates.
- */
+* Created with IntelliJ IDEA.
+* User: mgrimes
+* Date: 9/21/13
+* Time: 1:43 PM
+* To change this template use File | Settings | File Templates.
+*/
 public class BoxSession implements UDSession {
 
     private BoxClient client;
@@ -38,7 +39,7 @@ public class BoxSession implements UDSession {
     public BoxSession() {}
 
     @Override
-    public boolean authenticate(String userID) throws BoxServerException, AuthFatalFailureException, BoxRestException {
+    public boolean authenticate(String userID) throws UDException {
 
         String code = "";
 
@@ -49,7 +50,16 @@ public class BoxSession implements UDSession {
             e.printStackTrace();
         }
 
-        client = getAuthenticatedClient(code);
+        try {
+            client = getAuthenticatedClient(code);
+        } catch( BoxRestException e ) {
+            throw new UDException( "Rest communication failed!", e );
+        } catch( BoxServerException e ) {
+            throw new UDException( "Unable to connect to server!", e );
+        } catch( AuthFatalFailureException e ) {
+            throw new UDException( "Authentication failed!", e );
+        }
+
         System.out.println("We are authenticated");
 
         return client.isAuthenticated();
@@ -66,7 +76,7 @@ public class BoxSession implements UDSession {
     }
 
     @Override
-    public List<UFile> getFileList() {
+    public UFile getFileList() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
