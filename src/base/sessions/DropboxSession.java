@@ -219,7 +219,7 @@ public class DropboxSession implements UDSession {
      */
     private void getMatches( UFile root, List<UFile> matches, String searchString ) {
         for(UFile file : root.getChildren() ) {
-            if( file.getName().contains(searchString)) {
+            if( file.getName().toLowerCase().contains(searchString.toLowerCase())) {
                 matches.add( file );
             }
 

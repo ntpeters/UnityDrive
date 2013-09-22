@@ -59,7 +59,7 @@ public class UnityDrive {
                 String term = in.next();
                 List<UFile> search = getAggregateList();
                 for( UFile file : search ) {
-                    if( file.getName().contains( term )) {
+                    if( file.getName().toLowerCase().contains( term.toLowerCase() )) {
                         System.out.println( "[" + file.getOrigin() + "]" + " " + file.getName() );
                     }
                 }
