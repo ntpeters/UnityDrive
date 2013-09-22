@@ -29,37 +29,37 @@ public class GDSession implements UDSession {
     /**
      * Client Id DONT CHANGE
      */
-    private static String CLIENT_ID = "304793868911-vokk592ddao58s9oqm8f6jhj2udm6po5.apps.googleusercontent.com";
+    private static final String CLIENT_ID = "304793868911-vokk592ddao58s9oqm8f6jhj2udm6po5.apps.googleusercontent.com";
     /**
      * Client Super Secret Code DONT CHANGE
      */
-    private static String CLIENT_SECRET = "pK_uV6wVb0M13cXCIgdYP9lQ";
+    private static final String CLIENT_SECRET = "pK_uV6wVb0M13cXCIgdYP9lQ";
     /**
      * Redirect URI DONT CHANGE
      */
-    private static String REDIRECT_URI = "urn:ietf:wg:oauth:2.0:oob";
+    private static final String REDIRECT_URI = "urn:ietf:wg:oauth:2.0:oob";
 
     /**
      * Google drive service object
      */
-    private static Drive service;
+    private Drive service;
     /**
      * Credential object containing the user credentials for this session
      */
-    private static GoogleCredential credential;
+    private GoogleCredential credential;
     /**
      * Token response received back from the server
      */
-    private static GoogleTokenResponse response;
+    private GoogleTokenResponse response;
 
     /**
      * Contains information about the user and their storage space
      */
-    private static AccountInfo info;
+    private AccountInfo info;
     /**
      * The current user's id for this session
      */
-    private static String username;
+    private String username;
 
     /**
      * Mapping of accepted file types to supported MIME types
@@ -277,7 +277,9 @@ public class GDSession implements UDSession {
     public UFile upload(String filename) {
         // File's metadata.
         File body = new File();
-        body.setTitle(filename);
+        int lastSlash = filename.lastIndexOf('\\');
+        if(lastSlash == 0) lastSlash = filename.lastIndexOf('/');
+        body.setTitle(filename.substring(lastSlash+1,filename.length()));
         body.setDescription("");
         for(int i = 0; i < mimeTypes.length; i++){
             if(filename.endsWith(mimeTypes[i][0])){
@@ -328,8 +330,9 @@ public class GDSession implements UDSession {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(realFile));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    writer.write(line);
+                    writer.write(line+System.lineSeparator());
                 }
+                writer.write('\032');
                 writer.close();
                 reader.close();
             } else {
@@ -349,7 +352,7 @@ public class GDSession implements UDSession {
      *@return               The session type
      */
     public String getSessionType() {
-        return "Google Drive";
+        return "GoogleDrive";
     }
 
 }
