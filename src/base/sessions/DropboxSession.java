@@ -13,6 +13,8 @@ import java.util.Locale;
 
 /**
  * Dropbox session implementation
+ *
+ * @author ntpeters
  */
 public class DropboxSession implements UDSession {
     private static final String APP_KEY = "a1boy1ymao44h8q";        // App Key to access Dropbox API

@@ -7,6 +7,8 @@ import java.util.List;
  * This interface will ensure that each session for each service
  *  will provide a means to complete common tasks required for basic
  *  cloud storage actions.
+ *
+ *  @author ntpeters
  */
 public interface UDSession {
     /**

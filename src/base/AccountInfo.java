@@ -3,6 +3,8 @@ package base;
 /**
  * Info pertaining to a user account for a given service.
  * This should be unique within a single instance of the app.
+ *
+ * @author ntpeters
  */
 public class AccountInfo {
     private String username;     // The username of the user currently signed into this session

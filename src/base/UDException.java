@@ -2,6 +2,8 @@ package base;
 
 /**
  * General UnityDrive exception
+ *
+ * @author ntpeters
  */
 public class UDException extends Exception {
 

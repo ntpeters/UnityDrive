@@ -7,6 +7,8 @@ import java.util.List;
  * Defines a "UnityFile" node.
  * Internal file type that abstracts away the differences between each services internal file types.
  * Contains all relevant file information to our app.
+ *
+ * @author ejrinkus
  */
 public class UFile{
     private String name;            // Name of the file (e.g. document.docx)

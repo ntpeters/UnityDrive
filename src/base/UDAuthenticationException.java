@@ -2,6 +2,8 @@ package base;
 
 /**
  * Exception to be thrown upon failure to authenticate
+ *
+ * @author ntpeters
  */
 public class UDAuthenticationException extends UDException {
 
