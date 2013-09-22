@@ -65,7 +65,7 @@ public class GDSession implements UDSession {
         {"folder","application/vnd.google-apps.folder"}};
 
     @Override
-    public boolean authenticate(String userID) throws UDException {
+    public String authenticate(String userID) throws UDException {
         username = userID;
         HttpTransport httpTransport = new NetHttpTransport();
         JsonFactory jsonFactory = new JacksonFactory();
@@ -103,7 +103,7 @@ public class GDSession implements UDSession {
 
         //Create a new authorized API client
         service = new Drive.Builder(httpTransport, jsonFactory, credential).build();
-        return true;
+        return credential.getRefreshToken();
     }
 
     @Override

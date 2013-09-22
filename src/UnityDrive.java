@@ -4,9 +4,11 @@ import base.UDSession;
 import base.UFile;
 import base.sessions.BoxSession;
 import base.sessions.DropboxSession;
+import base.sessions.GDSession;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Main program
@@ -15,9 +17,52 @@ public class UnityDrive {
     public static AuthLookup tokenStore;
     public static ArrayList<UDSession> sessions;
 
-    public static void main( String[] args ) {
+    public static void main( String[] args ) throws UDException {
         tokenStore = new AuthLookup();
         sessions = new ArrayList<UDSession>();
+
+        menu();
+    }
+
+    public static void menu() throws UDException {
+        Scanner in = new Scanner(System.in);
+
+        System.out.println("Main Menu");
+        System.out.println("----------");
+        System.out.println("1. Add account");
+        System.out.println("2. List all files");
+        System.out.println("3. Search files");
+        System.out.println("Selection: ");
+        int sel = in.nextInt();
+
+        switch( sel ) {
+            case 1:
+                System.out.println("Service: ");
+                String service = in.next();
+                System.out.println("Username: ");
+                String user = in.next();
+
+                addAccount( service, user );
+                break;
+            case 2:
+                List<UFile> files = getAggregateList();
+                for( UFile file : files ) {
+                    System.out.println( "[" + file.getOrigin() + "]" + " " + file.getName() );
+                }
+                break;
+            case 3:
+                System.out.println("Search term: ");
+                String term = in.next();
+                List<UFile> search = getAggregateList();
+                for( UFile file : search ) {
+                    if( file.getName().contains( term )) {
+                        System.out.println( "[" + file.getOrigin() + "]" + " " + file.getName() );
+                    }
+                }
+                break;
+        }
+
+        menu();
     }
 
     /**
@@ -37,8 +82,8 @@ public class UnityDrive {
                     throw new UDException( "Failed to create Dropbox session!", e );
                 }
                 break;
-            case "Google Drive":
-                //sessions.add( new GDSession() );
+            case "GoogleDrive":
+                sessions.add( new GDSession() );
                 try {
                     tokenStore.addGoogleToken( userID, sessions.get( sessions.size() - 1 ).authenticate( userID ) );
                 } catch( UDException e ) {
