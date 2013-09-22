@@ -15,10 +15,10 @@ public interface UDSession {
      * Authenticates a session with the current service
      *
      * @param userID        The id of the user, such as username, for the current service
-     * @return              False if something non-exceptional fails during authentication
+     * @return              The auth token received from the API
      * @throws UDException
      */
-    public boolean authenticate( String userID ) throws UDException;
+    public String authenticate( String userID ) throws UDException;
 
     /**
      * Gets the account info for the user logged into the current session of the current service
