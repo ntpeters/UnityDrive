@@ -330,17 +330,15 @@ public class GDSession implements UDSession {
                         service.getRequestFactory().buildGetRequest(new GenericUrl(file.getDownloadUrl()))
                                 .execute();
                 InputStream stream = resp.getContent();
-                java.io.File realFile = new java.io.File("C:/Users/Eric/Desktop/"+file.getTitle());
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-                BufferedWriter writer = new BufferedWriter(new FileWriter(realFile));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    writer.write(line+System.lineSeparator());
+                java.io.File realFile = new java.io.File(file.getTitle());
+                FileOutputStream writer = new FileOutputStream(realFile);
+                int read = 0;
+                byte[] bytes = new byte[1024];
+                while ((read = stream.read(bytes)) != -1) {
+                    writer.write(bytes, 0, read);
                 }
-                writer.write('\032');
                 stream.close();
                 writer.close();
-                reader.close();
                 return realFile;
             } else {
                 // The file doesn't have any content stored on Drive.
