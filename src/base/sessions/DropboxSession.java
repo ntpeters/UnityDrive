@@ -75,7 +75,7 @@ public class DropboxSession implements UDSession {
         try {
             accountInfo.setTotalSize( client.getAccountInfo().quota.total );
             accountInfo.setUsedSize( client.getAccountInfo().quota.normal );
-            accountInfo.setUsername( client.getAccountInfo().displayName );
+            accountInfo.setUsername( userID );
         } catch( DbxException e ) {
             throw new UDException( "Unable to get account info!", e );
         }
@@ -219,7 +219,7 @@ public class DropboxSession implements UDSession {
      */
     private void getMatches( UFile root, List<UFile> matches, String searchString ) {
         for(UFile file : root.getChildren() ) {
-            if( file.getName().toLowerCase().contains(searchString.toLowerCase())) {
+            if( file.getName().toLowerCase().contains(searchString.toLowerCase() )) {
                 matches.add( file );
             }
 
