@@ -86,13 +86,6 @@ public class BoxSession implements UDSession {
            throw new UDAuthenticationException("Failed to authenticate box session!");
         }
 
-        /*
-        System.out.println("name: " + bUser.getName());
-        System.out.println("login: " + bUser.getLogin());
-        System.out.println("total size: " + readableFileSize();
-        System.out.println("used space: " + readableFileSize(bUser.getSpaceUsed().longValue()));
-        */
-
         AccountInfo accountInfo = new AccountInfo();
         accountInfo.setUsername(bUser.getLogin());
         accountInfo.setSessionType(this.getSessionType());
