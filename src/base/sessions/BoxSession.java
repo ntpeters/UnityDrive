@@ -39,6 +39,8 @@ public class BoxSession implements UDSession {
     private static final int PORT = 4000;
     private static final String sessionType = "Box";
 
+    private UFile directoryTree;
+
     public BoxSession() {}
 
     @Override
@@ -106,7 +108,8 @@ public class BoxSession implements UDSession {
 
     @Override
     public UFile getFileList() throws UDException {
-        return getFileList(new UFile("root"), "0");
+        if (directoryTree == null) directoryTree = getFileList(new UFile("root"), "0");
+        return directoryTree;
     }
 
     private UFile getFileList(UFile root, String id) throws UDException {
@@ -131,13 +134,14 @@ public class BoxSession implements UDSession {
 
         for (BoxTypedObject item : items) {
             UFile file = new UFile((String) item.getValue("name"));
+            System.out.println("Adding item: " + item.getValue("name"));
             file.setId(item.getId());
             file.setOrigin(this.getSessionType() + "-" + this.getAccountInfo().getUsername());
             root.addChild(file);
             file.setParent(root);
             if (item.getType().equals("folder")) { // folder
                 file.isFolder(true);
-                getFileList(root, root.getId());
+                getFileList(file, item.getId());
             } else { // file
                 file.isFolder(false);
             }
@@ -147,40 +151,38 @@ public class BoxSession implements UDSession {
     }
 
     @Override
-    public List<UFile> searchFiles(String searchString) {
-        return null;  // To change body of implemented methods use File | Settings | File Templates.
+    public List<UFile> searchFiles(String searchString) throws UDException {
+        ArrayList<UFile> matches = new ArrayList<UFile>();
+        if (containsString(this.getFileList(), searchString, matches)) {
+            return matches;
+        } else {
+            return null;
+        }
+    }
+
+    private boolean containsString(UFile file, String searchString, List<UFile> matches) {
+        boolean ret = false;
+        if (file.getName().contains(searchString)) {
+            matches.add(file);
+            ret = true;
+        }
+
+        for (UFile child : file.getChildren()) {
+            ret = ret || containsString(child, searchString, matches);
+        }
+
+        return ret;
     }
 
     @Override
     public UFile upload(String filename) throws UDException {
         File file = new File(filename);
-        BoxFileUploadRequestObject requestObj =
-                null;
 
-        BoxFolder testFile = null;
-        try {
-            testFile = client.getFoldersManager().getFolder("0", null);
-        } catch (BoxRestException e) {
-            throw new UDException("Box REST exception");
-        } catch (BoxServerException e) {
-            throw new UDException("Box server exception");
-        } catch (AuthFatalFailureException e) {
-            throw new UDAuthenticationException("Box authentication exception");
-        }
-
-        ArrayList<BoxTypedObject> items = testFile.getItemCollection().getEntries();
-
-        for (BoxTypedObject item : items) {
-            System.out.println("ID: " + item.getId() + " name: " + item.getValue("name"));
-        }
-
-        /*
         try {
             requestObj = BoxFileUploadRequestObject.uploadFileRequestObject("0", "name", file);
         } catch (BoxRestException e) {
             throw new UDException("Box REST exception!");
         }
-        */
 
         /*
         try {
