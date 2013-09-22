@@ -32,6 +32,9 @@ public class UnityDrive {
         System.out.println("1. Add account");
         System.out.println("2. List all files");
         System.out.println("3. Search files");
+        System.out.println("4. Upload file");
+        System.out.println("5. Download file");
+        System.out.println("6. Exit");
         System.out.println("Selection: ");
         int sel = in.nextInt();
 
@@ -47,7 +50,8 @@ public class UnityDrive {
             case 2:
                 List<UFile> files = getAggregateList();
                 for( UFile file : files ) {
-                    System.out.println( "[" + file.getOrigin() + "]" + " " + file.getName() );
+                    System.out.println( "[" + file.getOrigin() + "]" + " " + file.getName() +
+                                        " {" + file.getId() + "}");
                 }
                 break;
             case 3:
@@ -55,11 +59,43 @@ public class UnityDrive {
                 String term = in.next();
                 List<UFile> search = getAggregateList();
                 for( UFile file : search ) {
-                    if( file.getName().contains( term )) {
+                    if( file.getName().toLowerCase().contains( term.toLowerCase() )) {
                         System.out.println( "[" + file.getOrigin() + "]" + " " + file.getName() );
                     }
                 }
                 break;
+            case 4:
+                System.out.println("Service: ");
+                String upservice = in.next();
+                System.out.println("Username: ");
+                String upuser = in.next();
+                System.out.println("File (include the full path!): ");
+                String upfile = in.next();
+                for(UDSession s : sessions){
+                    if(s.getSessionType().equals(upservice) &&
+                            s.getAccountInfo().getUsername().equals(upuser)){
+                        s.upload(upfile);
+                        break;
+                    }
+                }
+                break;
+            case 5:
+                System.out.println("Service: ");
+                String downservice = in.next();
+                System.out.println("Username: ");
+                String downuser = in.next();
+                System.out.println("File ID: ");
+                String downfile = in.next();
+                for(UDSession s : sessions){
+                    if(s.getSessionType().equals(downservice) &&
+                            s.getAccountInfo().getUsername().equals(downuser)){
+                        s.download(downfile);
+                        break;
+                    }
+                }
+                break;
+            case 6:
+                System.exit(0);
         }
 
         menu();
@@ -75,25 +111,28 @@ public class UnityDrive {
     public static void addAccount( String accountType, String userID ) throws UDException {
         switch( accountType ) {
             case "Dropbox":
-                sessions.add( new DropboxSession() );
+                DropboxSession dSession = new DropboxSession();
+                sessions.add( dSession );
                 try {
-                    tokenStore.addDropboxToken( userID, sessions.get( sessions.size() - 1 ).authenticate( userID ) );
+                    tokenStore.addDropboxToken( userID, dSession.authenticate(userID) );
                 } catch( UDException e ) {
                     throw new UDException( "Failed to create Dropbox session!", e );
                 }
                 break;
             case "GoogleDrive":
-                sessions.add( new GDSession() );
+                GDSession gSession = new GDSession();
+                sessions.add( gSession );
                 try {
-                    tokenStore.addGoogleToken( userID, sessions.get( sessions.size() - 1 ).authenticate( userID ) );
+                    tokenStore.addGoogleToken( userID, gSession.authenticate(userID) );
                 } catch( UDException e ) {
                     throw new UDException( "Failed to create Google Drive session!", e );
                 }
                 break;
             case "Box":
-                sessions.add( new BoxSession() );
+                BoxSession bSession = new BoxSession();
+                sessions.add( bSession );
                 try {
-                    tokenStore.addBox( userID,  sessions.get( sessions.size() - 1 ).authenticate( userID ) );
+                    tokenStore.addBox( userID,  bSession.authenticate( userID ) );
                 } catch( UDException e ) {
                     throw new UDException( "Failed to create Box session!", e );
                 }
