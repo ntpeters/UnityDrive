@@ -1,13 +1,12 @@
 package base.sessions;
 
-import base.AccountInfo;
-import base.UDException;
-import base.UDSession;
-import base.UFile;
+import base.*;
 import com.box.boxjavalibv2.BoxClient;
 import com.box.boxjavalibv2.dao.BoxOAuthToken;
+import com.box.boxjavalibv2.dao.BoxUser;
 import com.box.boxjavalibv2.exceptions.AuthFatalFailureException;
 import com.box.boxjavalibv2.exceptions.BoxServerException;
+import com.box.boxjavalibv2.requests.requestobjects.BoxDefaultRequestObject;
 import com.box.boxjavalibv2.requests.requestobjects.BoxOAuthRequestObject;
 import com.box.restclientv2.exceptions.BoxRestException;
 
@@ -17,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -35,6 +35,7 @@ public class BoxSession implements UDSession {
     public static final String URL = "https://www.box.com/api/oauth2/authorize?" +
             "response_type=code&client_id=" + APP_KEY;
     private static final int PORT = 4000;
+    private static final String sessionType = "Box";
 
     public BoxSession() {}
 
@@ -67,22 +68,42 @@ public class BoxSession implements UDSession {
     }
 
     @Override
-    public AccountInfo getAccountInfo() {
+    public AccountInfo getAccountInfo() throws UDException {
+
+        BoxUser bUser = null;
+        try {
+            bUser = client.getUsersManager().getCurrentUser(new BoxDefaultRequestObject());
+        } catch (BoxRestException e) {
+            throw new UDException("Box rest exception!");
+        } catch (BoxServerException e) {
+            throw new UDException("Box server exception!");
+        } catch (AuthFatalFailureException e) {
+           throw new UDAuthenticationException("Failed to authenticate box session!");
+        }
+
+        /*
+        System.out.println("name: " + bUser.getName());
+        System.out.println("login: " + bUser.getLogin());
+        System.out.println("total size: " + readableFileSize();
+        System.out.println("used space: " + readableFileSize(bUser.getSpaceUsed().longValue()));
+        */
+
         AccountInfo accountInfo = new AccountInfo();
+        accountInfo.username = bUser.getLogin();
+        accountInfo.sessionType = this.getSessionType();
+        accountInfo.totalSize = bUser.getSpaceAmount().longValue();
+        accountInfo.usedSize = bUser.getSpaceUsed().longValue();
         return accountInfo;
-        // accountInfo.setUsername();
-        // accountInfo.setTotalSize();
-        // accountInfo.setUsedSize();
     }
 
     @Override
     public UFile getFileList() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public List<UFile> searchFiles(String searchString) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;  // To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
@@ -97,7 +118,7 @@ public class BoxSession implements UDSession {
 
     @Override
     public String getSessionType() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return BoxSession.sessionType;
     }
 
     private static BoxClient getAuthenticatedClient(String code) throws BoxRestException,
@@ -141,4 +162,20 @@ public class BoxSession implements UDSession {
         }
         return "";
     }
+
+
+    /**
+     *  Method to format a long integer that represents a # of bytes into a readable string.
+     *  like this: 1024 -> 1KB
+     * @param size # of bytes
+     * @return string representing using SI byte notation or
+     */
+    public static String readableFileSize(long size) {
+        if(size <= 0) return "0";
+        final String[] units = new String[] { "B", "KB", "MB", "GB", "TB" };
+        int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) +
+                " " + units[digitGroups];
+    }
+
 }

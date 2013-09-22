@@ -7,7 +7,7 @@ import java.util.List;
  */
 public interface UDSession {
     public boolean authenticate( String userID ) throws UDException;
-    public AccountInfo getAccountInfo();
+    public AccountInfo getAccountInfo() throws UDException;
     public UFile getFileList() throws UDException;
     public List<UFile> searchFiles( String searchString ) throws UDException;
     public UFile upload( String filename) throws UDException;
