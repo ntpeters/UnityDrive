@@ -42,7 +42,7 @@ public class BoxSession implements UDSession {
     public BoxSession() {}
 
     @Override
-    public boolean authenticate(String userID) throws UDException {
+    public String authenticate(String userID) throws UDException {
 
         String code = "";
 
@@ -65,8 +65,14 @@ public class BoxSession implements UDSession {
 
         System.out.println("We are authenticated");
 
-        return client.isAuthenticated();
+        String authToken = "";
+        try {
+            authToken = client.getAuthData().getRefreshToken();
+        } catch( AuthFatalFailureException e ) {
+            throw new UDAuthenticationException( "Failed to authenticate with Box!", e );
+        }
 
+        return authToken;
     }
 
     @Override

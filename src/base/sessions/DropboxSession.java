@@ -39,7 +39,7 @@ public class DropboxSession implements UDSession {
      * @throws UDException
      */
     @Override
-    public boolean authenticate(String userID) throws UDException {
+    public String authenticate(String userID) throws UDException {
 
 
         DbxRequestConfig config = new DbxRequestConfig(
@@ -80,7 +80,7 @@ public class DropboxSession implements UDSession {
         }
         accountInfo.setSessionType( this.sessionType );
 
-        return true;
+        return authFinish.accessToken;
     }
 
     /**
