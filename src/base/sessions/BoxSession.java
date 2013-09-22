@@ -105,8 +105,45 @@ public class BoxSession implements UDSession {
     }
 
     @Override
-    public UFile getFileList() {
-        return null;
+    public UFile getFileList() throws UDException {
+        return getFileList(new UFile("root"), "0");
+    }
+
+    private UFile getFileList(UFile root, String id) throws UDException {
+
+        root.setId(id);
+        root.isFolder(true);
+        root.setParent(null);
+        root.setOrigin(this.getSessionType() + "-" + this.getAccountInfo().getUsername());
+
+        // get the root directory folder
+        BoxFolder rootFolder = null;
+        try {
+            rootFolder = client.getFoldersManager().getFolder(id, null);
+        } catch (BoxRestException e) {
+            throw new UDException("Box REST exception!");
+        } catch (BoxServerException e) {
+            throw new UDException("Box server exception!");
+        } catch (AuthFatalFailureException e) {
+            throw new UDAuthenticationException("Box authentication exception!");
+        }
+        ArrayList<BoxTypedObject> items = rootFolder.getItemCollection().getEntries();
+
+        for (BoxTypedObject item : items) {
+            UFile file = new UFile((String) item.getValue("name"));
+            file.setId(item.getId());
+            file.setOrigin(this.getSessionType() + "-" + this.getAccountInfo().getUsername());
+            root.addChild(file);
+            file.setParent(root);
+            if (item.getType().equals("folder")) { // folder
+                file.isFolder(true);
+                getFileList(root, root.getId());
+            } else { // file
+                file.isFolder(false);
+            }
+        }
+
+        return root;
     }
 
     @Override
