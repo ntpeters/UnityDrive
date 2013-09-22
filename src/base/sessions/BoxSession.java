@@ -98,7 +98,7 @@ public class BoxSession implements UDSession {
 
     @Override
     public UFile getFileList() {
-
+        return null;
     }
 
     @Override
@@ -112,7 +112,16 @@ public class BoxSession implements UDSession {
     }
 
     @Override
-    public boolean download(String fileID) {
+    public boolean download(String fileID) throws UDException {
+        try {
+            client.getFilesManager().downloadFile(fileID, null);
+        } catch (BoxRestException e) {
+            throw new UDException("Box rest exception!");
+        } catch (BoxServerException e) {
+            throw new UDException("Box server exception!");
+        } catch (AuthFatalFailureException e) {
+            throw new UDAuthenticationException("Authentication exception!");
+        }
         return false;  // To change body of implemented methods use File | Settings | File Templates.
     }
 
