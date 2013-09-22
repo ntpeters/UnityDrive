@@ -5,6 +5,7 @@ import com.dropbox.core.*;
 
 import java.awt.*;
 import java.io.*;
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -266,26 +267,26 @@ public class DropboxSession implements UDSession {
     /**
      * Downloads a file from Dropbox
      *
+     *
+     *
      * @param fileID        The id of the file to download
      * @return              The file just downloaded
      * @throws UDException
      */
     @Override
-    public UFile download(String fileID ) throws UDException {
+    public File download(String fileID) throws UDException {
         FileOutputStream outputStream;
-        UFile returnFile = new UFile();
+
+        DbxEntry.File downloadedFile;
+        File ret;
 
         try {
             outputStream = new FileOutputStream(fileID);
 
-            DbxEntry.File downloadedFile = client.getFile( "/" + fileID, null, outputStream);
-
-            returnFile.setName( downloadedFile.name );
-            returnFile.setOrigin( accountInfo.getUsername() + "-" + accountInfo.getSessionType() );
-            returnFile.setId( downloadedFile.name );
-            returnFile.isFolder( false );
+            downloadedFile = client.getFile( "/" + fileID, null, outputStream);
 
             outputStream.close();
+            ret = new File("/" + fileID);
         } catch( FileNotFoundException e ) {
             throw new UDException( "File '" + fileID + "' not found!", e );
         } catch( DbxException e ) {
@@ -294,7 +295,7 @@ public class DropboxSession implements UDSession {
             throw new UDException( "Unable to write file!", e );
         }
 
-        return returnFile;
+        return ret;
     }
 
     /**
