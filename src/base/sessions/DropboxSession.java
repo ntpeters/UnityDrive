@@ -4,9 +4,7 @@ import base.*;
 import com.dropbox.core.*;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -23,11 +21,12 @@ public class DropboxSession implements UDSession {
 
     private DbxAppInfo appInfo;
     private DbxClient client;
-    private AccountInfo accounInfo;
+    private AccountInfo accountInfo;
+    private UFile directoryTree;    // Root node of the tree representing the directory structure
 
     public DropboxSession() {
-        appInfo = new DbxAppInfo( APPCONSTANTS.Dropbox.APP_KEY, APPCONSTANTS.Dropbox.APP_SECRET);
-        accounInfo = new AccountInfo();
+        appInfo = new DbxAppInfo( APP_KEY, APP_SECRET);
+        accountInfo = new AccountInfo();
 
     }
 
@@ -65,24 +64,28 @@ public class DropboxSession implements UDSession {
         client = new DbxClient(config, authFinish.accessToken);
 
         try {
-            accounInfo.totalSize = client.getAccountInfo().quota.total;
-            accounInfo.usedSize = client.getAccountInfo().quota.normal;
-            accounInfo.username = client.getAccountInfo().displayName;
+            accountInfo.totalSize = client.getAccountInfo().quota.total;
+            accountInfo.usedSize = client.getAccountInfo().quota.normal;
+            accountInfo.username = client.getAccountInfo().displayName;
         } catch( DbxException e ) {
             throw new UDException( "Unable to get account info!", e );
         }
-        accounInfo.sessionType = this.sessionType;
+        accountInfo.sessionType = this.sessionType;
 
         return true;
     }
 
     @Override
     public AccountInfo getAccountInfo() {
-        return accounInfo;
+        return accountInfo;
     }
 
     @Override
     public UFile getFileList() throws UDException {
+        if( directoryTree != null ) {
+            return directoryTree;
+        }
+
         ArrayList<UFile> returnList = new ArrayList<UFile>();
         DbxEntry.WithChildren files;
 
@@ -91,7 +94,7 @@ public class DropboxSession implements UDSession {
         root.setName( "/" );
         root.isFolder( true );
         root.setId( null );
-        root.setOrigin( accounInfo.username + "-" + accounInfo.sessionType );
+        root.setOrigin( accountInfo.username + "-" + accountInfo.sessionType );
 
         try {
             files = client.getMetadataWithChildren( "/" );
@@ -100,12 +103,12 @@ public class DropboxSession implements UDSession {
         }
 
         for( DbxEntry file : files.children ) {
-            UFile tempFile= new UFile();
+            UFile tempFile = new UFile();
 
             if( file.isFile() ) {
                 tempFile.isFolder( false );
                 tempFile.setName( file.name );
-                tempFile.setOrigin( accounInfo.username + "-" + accounInfo.sessionType );
+                tempFile.setOrigin( accountInfo.username + "-" + accountInfo.sessionType );
                 tempFile.setParent( root );
                 tempFile.setId( file.name );
             } else if( file.isFolder() ) {
@@ -114,7 +117,7 @@ public class DropboxSession implements UDSession {
                 folder.setName(file.name);
                 folder.isFolder(true);
                 folder.setId(file.name);
-                folder.setOrigin(accounInfo.username + "-" + accounInfo.sessionType);
+                folder.setOrigin(accountInfo.username + "-" + accountInfo.sessionType);
 
                 try {
                     tempFile = addChildren( folder, client.getMetadataWithChildren( file.path ) );
@@ -126,6 +129,7 @@ public class DropboxSession implements UDSession {
             root.addChild( tempFile );
         }
 
+        directoryTree = root;
         return root;
     }
 
@@ -138,7 +142,7 @@ public class DropboxSession implements UDSession {
             if( file.isFile() ) {
                 tempFile.isFolder( false );
                 tempFile.setName( file.name );
-                tempFile.setOrigin(accounInfo.username + "-" + accounInfo.sessionType);
+                tempFile.setOrigin(accountInfo.username + "-" + accountInfo.sessionType);
                 tempFile.setParent(root);
                 tempFile.setId(file.name);
             } else if( file.isFolder() ) {
@@ -147,7 +151,7 @@ public class DropboxSession implements UDSession {
                 nextFolder.setName( file.name );
                 nextFolder.isFolder( true );
                 nextFolder.setId( file.name );
-                nextFolder.setOrigin( accounInfo.username + "-" + accounInfo.sessionType );
+                nextFolder.setOrigin( accountInfo.username + "-" + accountInfo.sessionType );
 
                 try {
                     tempFile =  addChildren( nextFolder, client.getMetadataWithChildren( file.path ) );
@@ -163,18 +167,78 @@ public class DropboxSession implements UDSession {
     }
 
     @Override
-    public List<UFile> searchFiles(String searchString) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public List<UFile> searchFiles(String searchString) throws UDException {
+        ArrayList<UFile> returnList = new ArrayList<UFile>();
+        UFile root = getFileList();
+        getMatches( root, returnList, searchString );
+        return returnList;
+    }
+
+    private void getMatches( UFile root, List<UFile> matches, String searchString ) {
+        for(UFile file : root.getChildren() ) {
+            if( file.getName().contains(searchString)) {
+                matches.add( file );
+            }
+
+            if( file.isFolder() ) {
+                getMatches(file, matches, searchString);
+            }
+        }
     }
 
     @Override
-    public boolean upload(String filename) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    public UFile upload(String filename) throws UDException {
+        File inputFile = new File(filename);
+        FileInputStream inputStream;
+        UFile returnFile = new UFile();
+
+        try {
+            inputStream = new FileInputStream(inputFile);
+
+            DbxEntry.File uploadedFile = this.client.uploadFile( "/" + filename, DbxWriteMode.add(), inputFile.length(), inputStream );
+
+            returnFile.setName( uploadedFile.name );
+            returnFile.setOrigin( accountInfo.username + "-" + accountInfo.sessionType );
+            returnFile.setId( uploadedFile.name );
+            returnFile.isFolder( false );
+
+            inputStream.close();
+        } catch( FileNotFoundException e ) {
+            throw new UDException( "File '" + filename + "' not found!", e );
+        } catch( DbxException e ) {
+            throw new UDException( "Upload to Dropbox failed!", e );
+        } catch( IOException e ) {
+            throw new UDException( "Unable to read file!", e );
+        }
+
+        return returnFile;
     }
 
     @Override
-    public boolean download(String fileID) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    public UFile download(String fileID ) throws UDException {
+        FileOutputStream outputStream;
+        UFile returnFile = new UFile();
+
+        try {
+            outputStream = new FileOutputStream(fileID);
+
+            DbxEntry.File downloadedFile = client.getFile( "/" + fileID, null, outputStream);
+
+            returnFile.setName( downloadedFile.name );
+            returnFile.setOrigin( accountInfo.username + "-" + accountInfo.sessionType );
+            returnFile.setId( downloadedFile.name );
+            returnFile.isFolder( false );
+
+            outputStream.close();
+        } catch( FileNotFoundException e ) {
+            throw new UDException( "File '" + fileID + "' not found!", e );
+        } catch( DbxException e ) {
+            throw new UDException( "Upload to Dropbox failed!", e );
+        } catch( IOException e ) {
+            throw new UDException( "Unable to write file!", e );
+        }
+
+        return returnFile;
     }
 
     @Override
