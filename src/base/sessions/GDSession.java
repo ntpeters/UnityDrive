@@ -24,6 +24,11 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.net.URI;
 
+/**
+ * Google Drive session implementation
+ *
+ * @author ejrinkus
+ */
 public class GDSession implements UDSession {
 
     /**
@@ -258,7 +263,7 @@ public class GDSession implements UDSession {
     }
 
     public void searchHelper(UFile u, String match, List<UFile> list){
-        if(u.getName().contains(match)){
+        if(u.getName().toLowerCase().contains(match.toLowerCase())){
             list.add(u);
         }
         for(UFile c : u.getChildren()){

@@ -22,11 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
-* Created with IntelliJ IDEA.
-* User: mgrimes
-* Date: 9/21/13
-* Time: 1:43 PM
-* To change this template use File | Settings | File Templates.
+ * Box session implementation
+ *
+ * @author magrimes
 */
 public class BoxSession implements UDSession {
 
@@ -162,7 +160,7 @@ public class BoxSession implements UDSession {
 
     private boolean containsString(UFile file, String searchString, List<UFile> matches) {
         boolean ret = false;
-        if (file.getName().contains(searchString)) {
+        if (file.getName().toLowerCase().contains(searchString.toLowerCase())) {
             matches.add(file);
             ret = true;
         }
