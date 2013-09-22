@@ -107,8 +107,8 @@ public class BoxSession implements UDSession {
     }
 
     @Override
-    public boolean upload(String filename) {
-        return false;  // To change body of implemented methods use File | Settings | File Templates.
+    public UFile upload(String filename) throws UDException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
