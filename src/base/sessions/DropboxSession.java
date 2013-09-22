@@ -15,21 +15,27 @@ import java.util.Locale;
  * Dropbox session implementation
  */
 public class DropboxSession implements UDSession {
-    private static final String APP_KEY = "a1boy1ymao44h8q";
-    private static final String APP_SECRET = "yfbvljacppmqx6t";
-    private static final String sessionType = "Dropbox";
+    private static final String APP_KEY = "a1boy1ymao44h8q";        // App Key to access Dropbox API
+    private static final String APP_SECRET = "yfbvljacppmqx6t";     // App Secret to access Dropbox API
+    private static final String sessionType = "Dropbox";            // The session type
 
-    private DbxAppInfo appInfo;
-    private DbxClient client;
-    private AccountInfo accountInfo;
-    private UFile directoryTree;    // Root node of the tree representing the directory structure
+    private DbxAppInfo appInfo;         // Info for the Dropbox application
+    private DbxClient client;           // Client connection to the Dropbox API
+    private AccountInfo accountInfo;    // Account info for the currently logged in account
+    private UFile directoryTree;        // Root node of the tree representing the directory structure
 
     public DropboxSession() {
         appInfo = new DbxAppInfo( APP_KEY, APP_SECRET);
         accountInfo = new AccountInfo();
-
     }
 
+    /**
+     * Authenticates a Dropbox session
+     *
+     * @param userID        The id of the user, such as username, for the current service
+     * @return
+     * @throws UDException
+     */
     @Override
     public boolean authenticate(String userID) throws UDException {
 
@@ -64,22 +70,34 @@ public class DropboxSession implements UDSession {
         client = new DbxClient(config, authFinish.accessToken);
 
         try {
-            accountInfo.totalSize = client.getAccountInfo().quota.total;
-            accountInfo.usedSize = client.getAccountInfo().quota.normal;
-            accountInfo.username = client.getAccountInfo().displayName;
+            accountInfo.setTotalSize( client.getAccountInfo().quota.total );
+            accountInfo.setUsedSize( client.getAccountInfo().quota.normal );
+            accountInfo.setUsername( client.getAccountInfo().displayName );
         } catch( DbxException e ) {
             throw new UDException( "Unable to get account info!", e );
         }
-        accountInfo.sessionType = this.sessionType;
+        accountInfo.setSessionType( this.sessionType );
 
         return true;
     }
 
+    /**
+     * Gets the account info for the current logged in user for Dropbox
+     *
+     * @return              An AccountInfo object containing all relevant user information
+     * @throws UDException
+     */
     @Override
     public AccountInfo getAccountInfo() {
         return accountInfo;
     }
 
+    /**
+     * Builds a tree of the directory structure for the current Dropbox session
+     *
+     * @return              The root node of the tree representing the directory structure
+     * @throws UDException
+     */
     @Override
     public UFile getFileList() throws UDException {
         if( directoryTree != null ) {
@@ -94,7 +112,7 @@ public class DropboxSession implements UDSession {
         root.setName( "/" );
         root.isFolder( true );
         root.setId( null );
-        root.setOrigin( accountInfo.username + "-" + accountInfo.sessionType );
+        root.setOrigin( accountInfo.getUsername() + "-" + accountInfo.getSessionType() );
 
         try {
             files = client.getMetadataWithChildren( "/" );
@@ -108,7 +126,7 @@ public class DropboxSession implements UDSession {
             if( file.isFile() ) {
                 tempFile.isFolder( false );
                 tempFile.setName( file.name );
-                tempFile.setOrigin( accountInfo.username + "-" + accountInfo.sessionType );
+                tempFile.setOrigin( accountInfo.getUsername() + "-" + accountInfo.getSessionType() );
                 tempFile.setParent( root );
                 tempFile.setId( file.name );
             } else if( file.isFolder() ) {
@@ -117,7 +135,7 @@ public class DropboxSession implements UDSession {
                 folder.setName(file.name);
                 folder.isFolder(true);
                 folder.setId(file.name);
-                folder.setOrigin(accountInfo.username + "-" + accountInfo.sessionType);
+                folder.setOrigin(accountInfo.getUsername() + "-" + accountInfo.getSessionType());
 
                 try {
                     tempFile = addChildren( folder, client.getMetadataWithChildren( file.path ) );
@@ -133,6 +151,13 @@ public class DropboxSession implements UDSession {
         return root;
     }
 
+    /**
+     * Private method for building the directory tree for Dropbox
+     * @param root          The root node of the current subtree
+     * @param folder        The current folder we are at in the directory hierarchy
+     * @return              The last file reached in the subtree
+     * @throws UDException
+     */
     private UFile addChildren( UFile root, DbxEntry.WithChildren folder ) throws UDException {
         ArrayList<UFile> returnList = new ArrayList<UFile>();
 
@@ -142,7 +167,7 @@ public class DropboxSession implements UDSession {
             if( file.isFile() ) {
                 tempFile.isFolder( false );
                 tempFile.setName( file.name );
-                tempFile.setOrigin(accountInfo.username + "-" + accountInfo.sessionType);
+                tempFile.setOrigin(accountInfo.getUsername() + "-" + accountInfo.getSessionType());
                 tempFile.setParent(root);
                 tempFile.setId(file.name);
             } else if( file.isFolder() ) {
@@ -151,7 +176,7 @@ public class DropboxSession implements UDSession {
                 nextFolder.setName( file.name );
                 nextFolder.isFolder( true );
                 nextFolder.setId( file.name );
-                nextFolder.setOrigin( accountInfo.username + "-" + accountInfo.sessionType );
+                nextFolder.setOrigin( accountInfo.getUsername() + "-" + accountInfo.getSessionType() );
 
                 try {
                     tempFile =  addChildren( nextFolder, client.getMetadataWithChildren( file.path ) );
@@ -166,6 +191,14 @@ public class DropboxSession implements UDSession {
         return root;
     }
 
+    /**
+     * Searches the current Dropbox session directory for the searchString
+     * The list returns all matches, including partial matches containing the searchString
+     *
+     * @param searchString  String to search for in all file/folder names
+     * @return              The list of all matching files
+     * @throws UDException
+     */
     @Override
     public List<UFile> searchFiles(String searchString) throws UDException {
         ArrayList<UFile> returnList = new ArrayList<UFile>();
@@ -174,6 +207,13 @@ public class DropboxSession implements UDSession {
         return returnList;
     }
 
+    /**
+     * Private method to recursively find all matching files/folders in current Dropbox session
+     *
+     * @param root          The root node of the directory tree
+     * @param matches       The list containing all matching files
+     * @param searchString  The string to search for in all file/folder names
+     */
     private void getMatches( UFile root, List<UFile> matches, String searchString ) {
         for(UFile file : root.getChildren() ) {
             if( file.getName().contains(searchString)) {
@@ -186,6 +226,13 @@ public class DropboxSession implements UDSession {
         }
     }
 
+    /**
+     * Uploads a file to Dropbox
+     *
+     * @param filename      The name of the file to upload to Dropbox
+     * @return              The file that was just uploaded
+     * @throws UDException
+     */
     @Override
     public UFile upload(String filename) throws UDException {
         File inputFile = new File(filename);
@@ -198,7 +245,7 @@ public class DropboxSession implements UDSession {
             DbxEntry.File uploadedFile = this.client.uploadFile( "/" + filename, DbxWriteMode.add(), inputFile.length(), inputStream );
 
             returnFile.setName( uploadedFile.name );
-            returnFile.setOrigin( accountInfo.username + "-" + accountInfo.sessionType );
+            returnFile.setOrigin( accountInfo.getUsername() + "-" + accountInfo.getSessionType() );
             returnFile.setId( uploadedFile.name );
             returnFile.isFolder( false );
 
@@ -214,6 +261,13 @@ public class DropboxSession implements UDSession {
         return returnFile;
     }
 
+    /**
+     * Downloads a file from Dropbox
+     *
+     * @param fileID        The id of the file to download
+     * @return              The file just downloaded
+     * @throws UDException
+     */
     @Override
     public UFile download(String fileID ) throws UDException {
         FileOutputStream outputStream;
@@ -225,7 +279,7 @@ public class DropboxSession implements UDSession {
             DbxEntry.File downloadedFile = client.getFile( "/" + fileID, null, outputStream);
 
             returnFile.setName( downloadedFile.name );
-            returnFile.setOrigin( accountInfo.username + "-" + accountInfo.sessionType );
+            returnFile.setOrigin( accountInfo.getUsername() + "-" + accountInfo.getSessionType() );
             returnFile.setId( downloadedFile.name );
             returnFile.isFolder( false );
 
@@ -241,6 +295,11 @@ public class DropboxSession implements UDSession {
         return returnFile;
     }
 
+    /**
+     * Gets the type of the current session
+     *
+     * @return      The current session type
+     */
     @Override
     public String getSessionType() {
         return sessionType;
