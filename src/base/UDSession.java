@@ -60,11 +60,12 @@ public interface UDSession {
      * Downloads a file to the current service
      *
      *
+     *
      * @param fileID        The id of the file to download
      * @return              The file that was downloaded
      * @throws UDException
      */
-    public com.google.api.services.drive.model.File download(String fileID) throws UDx, UDException;
+    public File download(String fileID) throws UDException;
 
     /**
      * Gets the type of session that this is

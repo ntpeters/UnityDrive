@@ -6,6 +6,7 @@ import com.box.boxjavalibv2.dao.*;
 import com.box.boxjavalibv2.exceptions.AuthFatalFailureException;
 import com.box.boxjavalibv2.exceptions.BoxServerException;
 import com.box.boxjavalibv2.requests.requestobjects.BoxDefaultRequestObject;
+import com.box.boxjavalibv2.requests.requestobjects.BoxFileUploadRequestObject;
 import com.box.boxjavalibv2.requests.requestobjects.BoxOAuthRequestObject;
 import com.box.restclientv2.exceptions.BoxRestException;
 
@@ -177,31 +178,29 @@ public class BoxSession implements UDSession {
     public UFile upload(String filename) throws UDException {
         File file = new File(filename);
 
-//        try {
-//            requestObj = BoxFileUploadRequestObject.uploadFileRequestObject("0", "name", file);
-//        } catch (BoxRestException e) {
-//            throw new UDException("Box REST exception!");
-//        }
-
-        /*
+        BoxFileUploadRequestObject requestObj = null;
+        try {
+            requestObj = BoxFileUploadRequestObject.uploadFileRequestObject("0", file.getName(), file);
+        } catch (BoxRestException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
         try {
             BoxFile bFile = client.getFilesManager().uploadFile(requestObj);
         } catch (BoxRestException e) {
-            throw new UDException("Box REST exception!");
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (BoxServerException e) {
-            throw new UDException("Box REST exception!");
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (AuthFatalFailureException e) {
-            throw new UDAuthenticationException("Box authentication exception!");
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (InterruptedException e) {
-            throw new UDException("Box REST exception!");
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        */
 
         return null;
     }
 
     @Override
-    public com.google.api.services.drive.model.File download(String fileID) throws UDx {
+    public File download(String fileID) throws UDException {
         try {
             client.getFilesManager().downloadFile(fileID, null);
         } catch (BoxRestException e) {
