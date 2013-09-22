@@ -100,7 +100,7 @@ public class DropboxSession implements UDSession {
         }
 
         for( DbxEntry file : files.children ) {
-            UFile tempFile= new UFile();
+            UFile tempFile = new UFile();
 
             if( file.isFile() ) {
                 tempFile.isFolder( false );

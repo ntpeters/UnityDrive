@@ -1,5 +1,9 @@
 package base;
 
+import com.box.boxjavalibv2.exceptions.AuthFatalFailureException;
+import com.box.boxjavalibv2.exceptions.BoxServerException;
+import com.box.restclientv2.exceptions.BoxRestException;
+
 import java.util.List;
 
 /**
@@ -7,7 +11,7 @@ import java.util.List;
  */
 public interface UDSession {
     public boolean authenticate( String userID ) throws UDException;
-    public AccountInfo getAccountInfo();
+    public AccountInfo getAccountInfo() throws BoxServerException, AuthFatalFailureException, BoxRestException;
     public UFile getFileList() throws UDException;
     public List<UFile> searchFiles( String searchString );
     public boolean upload( String filename );
