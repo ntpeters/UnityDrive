@@ -6,7 +6,6 @@ import com.box.boxjavalibv2.dao.*;
 import com.box.boxjavalibv2.exceptions.AuthFatalFailureException;
 import com.box.boxjavalibv2.exceptions.BoxServerException;
 import com.box.boxjavalibv2.requests.requestobjects.BoxDefaultRequestObject;
-import com.box.boxjavalibv2.requests.requestobjects.BoxFileUploadRequestObject;
 import com.box.boxjavalibv2.requests.requestobjects.BoxOAuthRequestObject;
 import com.box.restclientv2.exceptions.BoxRestException;
 
@@ -178,11 +177,11 @@ public class BoxSession implements UDSession {
     public UFile upload(String filename) throws UDException {
         File file = new File(filename);
 
-        try {
-            requestObj = BoxFileUploadRequestObject.uploadFileRequestObject("0", "name", file);
-        } catch (BoxRestException e) {
-            throw new UDException("Box REST exception!");
-        }
+//        try {
+//            requestObj = BoxFileUploadRequestObject.uploadFileRequestObject("0", "name", file);
+//        } catch (BoxRestException e) {
+//            throw new UDException("Box REST exception!");
+//        }
 
         /*
         try {
@@ -202,7 +201,7 @@ public class BoxSession implements UDSession {
     }
 
     @Override
-    public UFile download(String fileID) throws UDException {
+    public com.google.api.services.drive.model.File download(String fileID) throws UDx {
         try {
             client.getFilesManager().downloadFile(fileID, null);
         } catch (BoxRestException e) {

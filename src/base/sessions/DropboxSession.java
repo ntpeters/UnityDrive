@@ -5,6 +5,7 @@ import com.dropbox.core.*;
 
 import java.awt.*;
 import java.io.*;
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -266,12 +267,13 @@ public class DropboxSession implements UDSession {
     /**
      * Downloads a file from Dropbox
      *
+     *
      * @param fileID        The id of the file to download
      * @return              The file just downloaded
      * @throws UDException
      */
     @Override
-    public UFile download(String fileID ) throws UDException {
+    public com.google.api.services.drive.model.File download(String fileID) throws UDx {
         FileOutputStream outputStream;
         UFile returnFile = new UFile();
 

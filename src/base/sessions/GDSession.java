@@ -306,7 +306,7 @@ public class GDSession implements UDSession {
      * @return              The file that was downloaded
      * @throws UDException
      */
-    public UFile download(String fileID) {
+    public File download(String fileID) throws UDException {
         try{
             //Find the file
             File file = null;
