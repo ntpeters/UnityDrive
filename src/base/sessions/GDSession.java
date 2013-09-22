@@ -338,8 +338,10 @@ public class GDSession implements UDSession {
                     writer.write(line+System.lineSeparator());
                 }
                 writer.write('\032');
+                stream.close();
                 writer.close();
                 reader.close();
+                return realFile;
             } else {
                 // The file doesn't have any content stored on Drive.
             }

@@ -11,10 +11,7 @@ import com.box.boxjavalibv2.requests.requestobjects.BoxOAuthRequestObject;
 import com.box.restclientv2.exceptions.BoxRestException;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.DecimalFormat;
@@ -199,16 +196,41 @@ public class BoxSession implements UDSession {
 
     @Override
     public File download(String fileID) throws UDException {
+        OutputStream fos;
+        InputStream fis;
+        File file = null;
+
         try {
-            client.getFilesManager().downloadFile(fileID, null);
+            fis = client.getFilesManager().downloadFile(fileID, null);
+            BoxFile bFile = client.getFilesManager().getFile(fileID, null);
+            try {
+                file = new File("./" + bFile.getValue("name"));
+                fos = new FileOutputStream(file);
+
+                int read = 0;
+                byte[] bytes = new byte[1024];
+
+                try {
+                    while ((read = fis.read(bytes)) != -1) {
+                        fos.write(bytes, 0, read);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         } catch (BoxRestException e) {
             throw new UDException("Box rest exception!");
         } catch (BoxServerException e) {
             throw new UDException("Box server exception!");
         } catch (AuthFatalFailureException e) {
-            throw new UDAuthenticationException("Authentication exception!");
+            throw new UDException("Box auth failure");
         }
-        return null;
+
+        return file;
     }
 
     @Override

@@ -51,7 +51,7 @@ public class UnityDrive {
                 List<UFile> files = getAggregateList();
                 for( UFile file : files ) {
                     System.out.println( "[" + file.getOrigin() + "]" + " " + file.getName() +
-                                        "{" + file.getId() + "}");
+                                        " {" + file.getId() + "}");
                 }
                 break;
             case 3:
