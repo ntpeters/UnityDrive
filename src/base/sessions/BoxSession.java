@@ -2,21 +2,23 @@ package base.sessions;
 
 import base.*;
 import com.box.boxjavalibv2.BoxClient;
-import com.box.boxjavalibv2.dao.BoxOAuthToken;
-import com.box.boxjavalibv2.dao.BoxUser;
+import com.box.boxjavalibv2.dao.*;
 import com.box.boxjavalibv2.exceptions.AuthFatalFailureException;
 import com.box.boxjavalibv2.exceptions.BoxServerException;
 import com.box.boxjavalibv2.requests.requestobjects.BoxDefaultRequestObject;
+import com.box.boxjavalibv2.requests.requestobjects.BoxFileUploadRequestObject;
 import com.box.boxjavalibv2.requests.requestobjects.BoxOAuthRequestObject;
 import com.box.restclientv2.exceptions.BoxRestException;
 
 import java.awt.*;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -89,10 +91,10 @@ public class BoxSession implements UDSession {
         */
 
         AccountInfo accountInfo = new AccountInfo();
-        accountInfo.username = bUser.getLogin();
-        accountInfo.sessionType = this.getSessionType();
-        accountInfo.totalSize = bUser.getSpaceAmount().longValue();
-        accountInfo.usedSize = bUser.getSpaceUsed().longValue();
+        accountInfo.setUsername(bUser.getLogin());
+        accountInfo.setSessionType(this.getSessionType());
+        accountInfo.setTotalSize(bUser.getSpaceAmount().longValue());
+        accountInfo.setUsedSize(bUser.getSpaceUsed().longValue());
         return accountInfo;
     }
 
@@ -108,11 +110,54 @@ public class BoxSession implements UDSession {
 
     @Override
     public UFile upload(String filename) throws UDException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        File file = new File(filename);
+        BoxFileUploadRequestObject requestObj =
+                null;
+
+        BoxFolder testFile = null;
+        try {
+            testFile = client.getFoldersManager().getFolder("0", null);
+        } catch (BoxRestException e) {
+            throw new UDException("Box REST exception");
+        } catch (BoxServerException e) {
+            throw new UDException("Box server exception");
+        } catch (AuthFatalFailureException e) {
+            throw new UDAuthenticationException("Box authentication exception");
+        }
+
+        ArrayList<BoxTypedObject> items = testFile.getItemCollection().getEntries();
+
+        for (BoxTypedObject item : items) {
+            System.out.println("ID: " + item.getId() + " name: " + item.getValue("name"));
+        }
+
+        /*
+        try {
+            requestObj = BoxFileUploadRequestObject.uploadFileRequestObject("0", "name", file);
+        } catch (BoxRestException e) {
+            throw new UDException("Box REST exception!");
+        }
+        */
+
+        /*
+        try {
+            BoxFile bFile = client.getFilesManager().uploadFile(requestObj);
+        } catch (BoxRestException e) {
+            throw new UDException("Box REST exception!");
+        } catch (BoxServerException e) {
+            throw new UDException("Box REST exception!");
+        } catch (AuthFatalFailureException e) {
+            throw new UDAuthenticationException("Box authentication exception!");
+        } catch (InterruptedException e) {
+            throw new UDException("Box REST exception!");
+        }
+        */
+
+        return null;
     }
 
     @Override
-    public boolean download(String fileID) throws UDExceptio{
+    public UFile download(String fileID) throws UDException {
         try {
             client.getFilesManager().downloadFile(fileID, null);
         } catch (BoxRestException e) {
@@ -122,7 +167,7 @@ public class BoxSession implements UDSession {
         } catch (AuthFatalFailureException e) {
             throw new UDAuthenticationException("Authentication exception!");
         }
-        return false;  // To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
