@@ -9,8 +9,8 @@ public interface UDSession {
     public boolean authenticate( String userID ) throws UDException;
     public AccountInfo getAccountInfo();
     public UFile getFileList() throws UDException;
-    public List<UFile> searchFiles( String searchString );
-    public boolean upload( String filename );
-    public boolean download( String fileID );
+    public List<UFile> searchFiles( String searchString ) throws UDException;
+    public UFile upload( String filename) throws UDException;
+    public UFile download( String fileID ) throws UDException;
     public String getSessionType();
 }
