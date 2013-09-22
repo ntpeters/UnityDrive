@@ -91,10 +91,10 @@ public class BoxSession implements UDSession {
         */
 
         AccountInfo accountInfo = new AccountInfo();
-        accountInfo.username = bUser.getLogin();
-        accountInfo.sessionType = this.getSessionType();
-        accountInfo.totalSize = bUser.getSpaceAmount().longValue();
-        accountInfo.usedSize = bUser.getSpaceUsed().longValue();
+        accountInfo.setUsername(bUser.getLogin());
+        accountInfo.setSessionType(this.getSessionType());
+        accountInfo.setTotalSize(bUser.getSpaceAmount().longValue());
+        accountInfo.setUsedSize(bUser.getSpaceUsed().longValue());
         return accountInfo;
     }
 
