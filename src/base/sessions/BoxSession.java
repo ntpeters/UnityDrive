@@ -112,7 +112,7 @@ public class BoxSession implements UDSession {
     }
 
     @Override
-    public boolean download(String fileID) throws UDException {
+    public boolean download(String fileID) throws UDExceptio{
         try {
             client.getFilesManager().downloadFile(fileID, null);
         } catch (BoxRestException e) {
