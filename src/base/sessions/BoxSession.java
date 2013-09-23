@@ -27,8 +27,8 @@ public class BoxSession implements UDSession {
 
     private BoxClient client;
 
-    private static final String APP_KEY = "h0b9azeqj3mtmy787iqwpucev2gqqskf";
-    private static final String APP_SECRET = "STRVZ1ftmCrzUzor08gPP2h2hYVaTNWG";
+    private static final String APP_KEY = APPCONSTANTS.Box.APP_KEY;
+    private static final String APP_SECRET = APPCONSTANTS.Box.APP_SECRET;
     public static final String URL = "https://www.box.com/api/oauth2/authorize?" +
             "response_type=code&client_id=" + APP_KEY;
     private static final int PORT = 4000;

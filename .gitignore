@@ -29,4 +29,5 @@ local.properties
 .idea/
 *.iml
 
-src/TestApplication.java
+# Ignore the APPCONSTANTS file so that our app keys aren't shared
+src/base/sessions/APPCONSTANTS.java

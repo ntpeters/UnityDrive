@@ -18,9 +18,9 @@ import java.util.Locale;
  * @author ntpeters
  */
 public class DropboxSession implements UDSession {
-    private static final String APP_KEY = "a1boy1ymao44h8q";        // App Key to access Dropbox API
-    private static final String APP_SECRET = "yfbvljacppmqx6t";     // App Secret to access Dropbox API
-    private static final String sessionType = "Dropbox";            // The session type
+    private static final String APP_KEY = APPCONSTANTS.Dropbox.APP_KEY;         // App Key to access Dropbox API
+    private static final String APP_SECRET = APPCONSTANTS.Dropbox.APP_SECRET;   // App Secret to access Dropbox API
+    private static final String sessionType = "Dropbox";                        // The session type
 
     private DbxAppInfo appInfo;         // Info for the Dropbox application
     private DbxClient client;           // Client connection to the Dropbox API

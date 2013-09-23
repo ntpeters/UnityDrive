@@ -6,7 +6,7 @@ import base.UDSession;
 import base.UFile;
 import base.sessions.BoxSession;
 import base.sessions.DropboxSession;
-import base.sessions.GDSession;
+import base.sessions.GoogleDriveSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class UIHelpers {
                 }
                 break;
             case "GoogleDrive":
-                GDSession gSession = new GDSession();
+                GoogleDriveSession gSession = new GoogleDriveSession();
                 sessions.add( gSession );
                 try {
                     tokenStore.addGoogleToken( userID, gSession.authenticate(userID) );

@@ -1,0 +1,39 @@
+package base.sessions;
+
+/*
+NOTE: This is only a sample skeleton to be used to base your file on.
+      For the application to be able to access the web services, you will
+        need to provide your own access keys and secrets in this file.
+*/
+
+
+/**
+ * Used to store app access keys and secrets for the web services this
+ *   application will interact with.
+ *
+ * @author ntpeters
+ */
+public class APPCONSTANTS {
+
+    /**
+     * App access info for Dropbox
+     */
+    protected static class Dropbox {
+        protected static final String APP_KEY = "";
+        protected static final String APP_SECRET = "";
+    }
+
+    /**
+     * App access info for Google
+     */
+    protected static class Google {
+        protected static final String CLIENT_ID = "";
+        protected static final String CLIENT_SECRET = "";
+        protected static final String REDIRECT_URI = "";
+    }
+
+    protected static class Box {
+        protected static final String APP_KEY = "";
+        protected static final String APP_SECRET = "";
+    }
+}

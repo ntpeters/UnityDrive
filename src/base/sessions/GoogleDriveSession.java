@@ -29,20 +29,20 @@ import java.net.URI;
  *
  * @author ejrinkus
  */
-public class GDSession implements UDSession {
+public class GoogleDriveSession implements UDSession {
 
     /**
      * Client Id DONT CHANGE
      */
-    private static final String CLIENT_ID = "304793868911-vokk592ddao58s9oqm8f6jhj2udm6po5.apps.googleusercontent.com";
+    private static final String CLIENT_ID = APPCONSTANTS.Google.CLIENT_ID;
     /**
      * Client Super Secret Code DONT CHANGE
      */
-    private static final String CLIENT_SECRET = "pK_uV6wVb0M13cXCIgdYP9lQ";
+    private static final String CLIENT_SECRET = APPCONSTANTS.Google.CLIENT_SECRET;
     /**
      * Redirect URI DONT CHANGE
      */
-    private static final String REDIRECT_URI = "urn:ietf:wg:oauth:2.0:oob";
+    private static final String REDIRECT_URI = APPCONSTANTS.Google.REDIRECT_URI;
 
     /**
      * Google drive service object
