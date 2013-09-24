@@ -26,5 +26,6 @@ ease knowing exactly where and how to access your data when you need it most.
 
 Unify your storage.  Unify your life.  __Unify your destiny__.
 
-Have any other questions on where we're at with this? Check out the FAQ:
+Have any other questions on where we're at with this?
+Check out the FAQ:
 https://github.com/ntpeters/UnityDrive/wiki/What-the-FAQ%3F
