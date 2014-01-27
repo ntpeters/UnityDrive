@@ -2,6 +2,8 @@ UnityDrive
 ========
 Unifying cloud storage, one account at a time.
 
+__Please Note: This is incomplete, hackathon quality code. We plan to complete this project in the future, but until that time you have been warned.__
+
 Everyone has run into a time when they needed a file from one of their various
 cloud accounts, and then been reduced to the drudgery of signing into multiple
 accounts spread across several webpages.  It's not uncommon to have many
